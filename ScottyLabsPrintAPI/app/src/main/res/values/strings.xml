@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ScottyLabs Print API</string>
+    <string name="print_bn_text">Print</string>
+    <string name="andrew_id">Andrew ID</string>
+    <string name="msg_please_enter_id">Please enter your Andrew ID.</string>
+    <string name="msg_config_complete">Configuration complete.  You can now print using the share
+    menu in your favorite PDF viewer.</string>
+    <string name="msg_confirm_print">Tap print to add your document to the queue.</string>
+    <string name="set_id">Set Andrew ID</string>
+</resources>
