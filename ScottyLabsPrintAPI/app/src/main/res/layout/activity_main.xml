@@ -47,7 +47,7 @@
                 android:id="@+id/setIdButton"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:onClick="setAndrewId"/>
+                android:onClick="setAndrewIdBnPress"/>
 
             <EditText
                 android:layout_width="wrap_content"
