@@ -1,5 +1,7 @@
 package org.scottylabs.print;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 
 import java.io.File;
@@ -80,9 +82,8 @@ public class MultipartUtility {
      * @param uploadFile a File to be uploaded
      * @throws IOException
      */
-    public void addFilePart(String fieldName, InputStream uploadFile, String fileName)
+    public void addFilePart(String fieldName, InputStream uploadFile, String fileName, String extension)
             throws IOException {
-        //String fileName = uploadFile.getName();
         writer.append("--" + boundary).append(LINE_FEED);
         writer.append(
                 "Content-Disposition: form-data; name=\"" + fieldName
@@ -90,7 +91,7 @@ public class MultipartUtility {
                 .append(LINE_FEED);
         writer.append(
                 "Content-Type: "
-                        + URLConnection.guessContentTypeFromName(fileName))
+                        + URLConnection.guessContentTypeFromName("file" + extension))
                 .append(LINE_FEED);
         writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
         writer.append(LINE_FEED);
@@ -134,18 +135,18 @@ public class MultipartUtility {
 
         // checks server's status code first
         int status = httpConn.getResponseCode();
-        if (status == HttpURLConnection.HTTP_OK) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    httpConn.getInputStream()));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                response.add(line);
-            }
-            reader.close();
-            httpConn.disconnect();
-        } else {
-            throw new IOException("Server returned non-OK status: " + status);
+        //if (status == HttpURLConnection.HTTP_OK) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                httpConn.getInputStream()));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            response.add(line);
         }
+        reader.close();
+        httpConn.disconnect();
+        /*} else {
+            throw new IOException("Server returned non-OK status: " + status);
+        }*/
 
         return response;
     }

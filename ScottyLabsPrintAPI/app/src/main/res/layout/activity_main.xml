@@ -29,7 +29,7 @@
             android:layout_below="@+id/backgroundImage"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textColor="#ffffff"
             android:id="@+id/infoMessage" />
 
@@ -86,6 +86,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/relative_layout"
             android:onClick="printBnPress"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:layout_marginTop="20dp"/>
     </RelativeLayout>
 </ScrollView>
