@@ -72,17 +72,25 @@ public class MainActivity extends AppCompatActivity {
     void renderMessage(){
         TextView infoMessageView=(TextView)findViewById(R.id.infoMessage);
         String message;
-        if(model.andrewIdSet){
-            if(model.hasFile){
-                message=getResources().getString(R.string.msg_confirm_print);
-                message=String.format(message,model.fileName);
+        if(model.printStatus == MainActivityModel.STATUS_ERROR) {
+            message="Print error: " + model.printError;
+        }
+        else if(model.printStatus == MainActivityModel.STATUS_SUCCESS) {
+            message=getResources().getString(R.string.msg_print_success);
+        }
+        else {
+            if(model.andrewIdSet){
+                if(model.hasFile){
+                    message=getResources().getString(R.string.msg_confirm_print);
+                    message=String.format(message,model.fileName);
+                }
+                else{
+                    message=getResources().getString(R.string.msg_config_complete);
+                }
             }
             else{
-                message=getResources().getString(R.string.msg_config_complete);
+                message = getResources().getString(R.string.msg_please_enter_id);
             }
-        }
-        else{
-            message = getResources().getString(R.string.msg_please_enter_id);
         }
         infoMessageView.setText(message);
     }
@@ -106,18 +114,26 @@ public class MainActivity extends AppCompatActivity {
     // Updates the appearance of the print button based on current state
     void renderPrintButton(){
         Button printButton=(Button)findViewById(R.id.printButton);
+        String text = getResources().getString(R.string.print_bn_text);
         if(model.hasFile){
             printButton.setVisibility(View.VISIBLE);
-            if(model.andrewIdSet&&!model.editingId){
-                printButton.setEnabled(true);
-            }
-            else{
+            if (model.printing) {
                 printButton.setEnabled(false);
+                text = getResources().getString(R.string.print_bn_text_printing);
+            }
+            else {
+                if(model.andrewIdSet&&!model.editingId){
+                    printButton.setEnabled(true);
+                }
+                else{
+                    printButton.setEnabled(false);
+                }
             }
         }
         else{
             printButton.setVisibility(View.GONE);
         }
+        printButton.setText(text);
     }
 
     // Sends the print request to the API
@@ -136,6 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
     public String readAndrewIdEditText() {
         EditText editAndrewIdView=(EditText)findViewById(R.id.editAndrewId);
-        return editAndrewIdView.getText().toString();
+        return editAndrewIdView.getText().toString().trim();
     }
 }

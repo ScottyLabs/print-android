@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
 
 /**
  * Created by Tom on 2/18/2018.
@@ -81,8 +79,26 @@ public class MainActivityController {
     }
 
     public void sendPrintRequest() {
-        PrintApiRequest request = new PrintApiRequest(model.andrewId,model.fileUri,model.fileName,context);
-        request.send();
+
+        RequestData data = new RequestData(model.andrewId, model.fileUri, model.fileName);
+        model.printing = true;
+        new PrintApiRequest(data, context) {
+            @Override
+            protected void onPostExecute(RequestResult requestResult) {
+                super.onPostExecute(requestResult);
+                if (requestResult.success) {
+                    model.printStatus = MainActivityModel.STATUS_SUCCESS;
+                    model.printError = "";
+                }
+                else {
+                    model.printStatus = MainActivityModel.STATUS_ERROR;
+                    model.printError = requestResult.error;
+                }
+                model.printing = false;
+                view.render();
+            }
+        }.execute();
+        view.render();
     }
 
     public void setAndrewIdBnPress() {
