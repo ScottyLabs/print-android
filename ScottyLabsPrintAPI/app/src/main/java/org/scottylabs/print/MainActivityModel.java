@@ -20,16 +20,19 @@ public class MainActivityModel {
     public String andrewId="";
     public boolean editingId = true;
     public boolean printing = false;
+    public boolean awaitingPermissions;
     public int printStatus = STATUS_NORMAL;
     public String printError = "";
     public void saveToBundle(Bundle savedInstanceState) {
         savedInstanceState.putBoolean("EditingId", editingId);
         savedInstanceState.putInt("PrintStatus", printStatus);
         savedInstanceState.putString("PrintError", printError);
+        savedInstanceState.putBoolean("AwaitingPermissions", awaitingPermissions);
     }
     public void restoreFromBundle(Bundle savedInstanceState) {
         editingId = savedInstanceState.getBoolean("EditingId");
         printStatus = savedInstanceState.getInt("PrintStatus");
         printError = savedInstanceState.getString("PrintError");
+        awaitingPermissions = savedInstanceState.getBoolean("AwaitingPermissions");
     }
 }

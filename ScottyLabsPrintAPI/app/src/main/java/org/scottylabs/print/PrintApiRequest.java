@@ -26,21 +26,17 @@ import java.util.concurrent.Callable;
 public class PrintApiRequest extends AsyncTask<Void, Void, RequestResult> {
     private static String API_URL="https://apis.scottylabs.org/print/v0/printfile";
     private RequestData requestData;
-    private Context context;
 
-    public PrintApiRequest(RequestData data, Context context) {
+    public PrintApiRequest(RequestData data) {
         requestData = data;
-        this.context = context;
     }
 
     protected RequestResult doInBackground(Void... params) {
         try{
             Log.d("ApiRequest", "Starting upload");
-            ContentResolver contentResolver=context.getContentResolver();
-            InputStream iStream = contentResolver.openInputStream(requestData.filePath);
             MultipartUtility request = new MultipartUtility(API_URL,"UTF-8");
             request.addFormField("andrew_id",requestData.andrewId);
-            request.addFilePart("file",iStream,requestData.fileName, ".pdf");
+            request.addFilePart("file",requestData.fileStream,requestData.fileName, ".pdf");
             List<String> result = request.finish();
             Log.d("ApiRequest", "Upload completed");
             RequestResult requestResult = new RequestResult(result);

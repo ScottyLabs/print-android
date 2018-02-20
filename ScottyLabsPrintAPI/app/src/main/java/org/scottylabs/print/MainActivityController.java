@@ -1,12 +1,18 @@
 package org.scottylabs.print;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by Tom on 2/18/2018.
@@ -21,12 +27,14 @@ public class MainActivityController {
     private MainActivityModel model;
     private SettingsManager settings;
     private Context context;
+    private PermissionManager permissions;
 
     public MainActivityController(MainActivity mainActivity, MainActivityModel model) {
         view = mainActivity;
         this.model = model;
         this.context = view.getApplicationContext();
         this.settings = new SettingsManager(context);
+        this.permissions = new PermissionManager();
         loadModel();
         view.render();
     }
@@ -78,11 +86,34 @@ public class MainActivityController {
         return fileName;
     }
 
-    public void sendPrintRequest() {
+    private void setOpenFileError() {
+        model.printStatus = MainActivityModel.STATUS_ERROR;
+        model.printError = "Failed to open file.";
+    }
 
-        RequestData data = new RequestData(model.andrewId, model.fileUri, model.fileName);
+    public void sendPrintRequest() {
+        InputStream inputStream;
+        try{
+            ContentResolver contentResolver=context.getContentResolver();
+            inputStream = contentResolver.openInputStream(model.fileUri);
+        }
+        catch (FileNotFoundException exception){
+            if (exception.getMessage().contains("EACCES (Permission denied)")) {
+                if (permissions.requestFilePermission(view)) {
+                    Log.d("Print API", "Requesting permission");
+                    model.awaitingPermissions = true;
+                    return;
+                }
+            }
+            Log.e("ApiRequest", exception.getMessage() + exception.getClass());
+            setOpenFileError();
+            view.render();
+            return;
+        }
+
+        RequestData data = new RequestData(model.andrewId, inputStream, model.fileName);
         model.printing = true;
-        new PrintApiRequest(data, context) {
+        new PrintApiRequest(data) {
             @Override
             protected void onPostExecute(RequestResult requestResult) {
                 super.onPostExecute(requestResult);
@@ -120,6 +151,22 @@ public class MainActivityController {
         if(model.editingId){
             setAndrewIdBnPress();
         }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] perms, @NonNull int[] grantResults) {
+        if (!model.awaitingPermissions) return;
+        int status = permissions.checkRequestGranted(requestCode, perms, grantResults);
+        if (status == PermissionManager.PROMPT_REJECTED) {
+            Log.d("Print API", "Permission denied");
+            model.awaitingPermissions = false;
+            setOpenFileError();
+        }
+        else if (status == PermissionManager.PROMPT_ACCEPTED) {
+            Log.d("Print API", "Permission granted");
+            model.awaitingPermissions = false;
+            sendPrintRequest(); // Let's try again!
+        }
+        view.render();
     }
 
     // Reads the andrew id from the text view and saves it if it isn't blank. Returns false if blank.
