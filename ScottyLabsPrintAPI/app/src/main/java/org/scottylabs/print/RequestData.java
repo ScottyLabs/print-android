@@ -1,5 +1,6 @@
 package org.scottylabs.print;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
@@ -11,12 +12,15 @@ import java.io.InputStream;
 
 public class RequestData {
     public String andrewId;
-    public InputStream fileStream;
+    public ContentResolver contentResolver;
     public String fileName;
+    public Uri fileUri;
 
-    public RequestData(String andrewId, InputStream fileStream, String fileName){
+    public RequestData(String andrewId, ContentResolver contentResolver, Uri fileUri, String fileName){
         this.andrewId = andrewId;
-        this.fileStream = fileStream;
+        this.contentResolver = contentResolver;
+        this.fileUri = fileUri;
         this.fileName = fileName;
+
     }
 }

@@ -84,6 +84,9 @@ public class MultipartUtility {
      */
     public void addFilePart(String fieldName, InputStream uploadFile, String fileName, String extension)
             throws IOException {
+        if (!fileName.endsWith(extension)) {
+            fileName = fieldName + extension;
+        }
         writer.append("--" + boundary).append(LINE_FEED);
         writer.append(
                 "Content-Disposition: form-data; name=\"" + fieldName

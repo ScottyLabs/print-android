@@ -11,10 +11,16 @@ import java.util.List;
 
 public class RequestResult {
     public boolean success;
+    public boolean permissionError;
     public String error;
     public RequestResult(boolean success, String error) {
         this.success = success;
         this.error = error;
+        this.permissionError = false;
+    }
+    public RequestResult(boolean success, String error, boolean permissionError) {
+        this(success, error);
+        this.permissionError = permissionError;
     }
     public RequestResult(List<String> apiResponse) {
         StringBuilder sb = new StringBuilder();

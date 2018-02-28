@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -32,11 +33,27 @@ public class PrintApiRequest extends AsyncTask<Void, Void, RequestResult> {
     }
 
     protected RequestResult doInBackground(Void... params) {
+
+        InputStream inputStream;
+        try{
+            Log.d("Print API", "Opening stream");
+            inputStream = requestData.contentResolver.openInputStream(requestData.fileUri);
+        }
+        catch (FileNotFoundException exception){
+            Log.e("ApiRequest", exception.getMessage() + exception.getClass());
+            if (exception.getMessage().contains("EACCES (Permission denied)")) {
+                return new RequestResult(false, "Permission Denied", true);
+            }
+            return new RequestResult(false, "Failed to open file");
+        }
+
         try{
             Log.d("ApiRequest", "Starting upload");
             MultipartUtility request = new MultipartUtility(API_URL,"UTF-8");
             request.addFormField("andrew_id",requestData.andrewId);
-            request.addFilePart("file",requestData.fileStream,requestData.fileName, ".pdf");
+            Log.d("ApiRequest", "Adding file");
+            request.addFilePart("file",inputStream,requestData.fileName, ".pdf");
+            Log.d("ApiRequest", "Uploading file");
             List<String> result = request.finish();
             Log.d("ApiRequest", "Upload completed");
             RequestResult requestResult = new RequestResult(result);

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -20,8 +21,6 @@ import java.io.InputStream;
 
 public class MainActivityController {
 
-
-    private static String DEFAULT_FILE_NAME="file.pdf";
 
     private MainActivity view;
     private MainActivityModel model;
@@ -53,7 +52,8 @@ public class MainActivityController {
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("application/pdf".equals(type)) {
                 model.fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                model.fileName = getFileName(model.fileUri, DEFAULT_FILE_NAME);
+                model.fileName = getFileName(model.fileUri);
+                Log.d("Print API", "Received file: " + model.fileUri.getPath());
                 model.hasFile = true;
                 return;
             }
@@ -69,21 +69,25 @@ public class MainActivityController {
     }
 
     // Gets the name of the file to print or returns the default name
-    private String getFileName(Uri filePath, String defaultName){
-        ContentResolver contentResolver=view.getContentResolver();
-        String[] projection = {MediaStore.MediaColumns.DISPLAY_NAME};
-        Cursor metaCursor = contentResolver.query(filePath, projection, null, null, null);
-        String fileName=defaultName;
-        if (metaCursor != null) {
+    private String getFileName(Uri filePath){
+        String result = null;
+        if (filePath.getScheme().equals("content")) {
+            Cursor cursor = view.getContentResolver().query(filePath, null, null, null, null);
             try {
-                if (metaCursor.moveToFirst()) {
-                    fileName = metaCursor.getString(0);
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
             } finally {
-                metaCursor.close();
+                cursor.close();
             }
         }
-        return fileName;
+        if (result == null) {
+            result = filePath.getLastPathSegment();
+        }
+        if (!result.contains(".")) {
+            result = "file.pdf";
+        }
+        return result;
     }
 
     private void setOpenFileError() {
@@ -92,27 +96,11 @@ public class MainActivityController {
     }
 
     public void sendPrintRequest() {
-        InputStream inputStream;
-        try{
-            ContentResolver contentResolver=context.getContentResolver();
-            inputStream = contentResolver.openInputStream(model.fileUri);
-        }
-        catch (FileNotFoundException exception){
-            if (exception.getMessage().contains("EACCES (Permission denied)")) {
-                if (permissions.requestFilePermission(view)) {
-                    Log.d("Print API", "Requesting permission");
-                    model.awaitingPermissions = true;
-                    return;
-                }
-            }
-            Log.e("ApiRequest", exception.getMessage() + exception.getClass());
-            setOpenFileError();
-            view.render();
-            return;
-        }
+        Log.d("Print API", "Starting print request");
 
-        RequestData data = new RequestData(model.andrewId, inputStream, model.fileName);
+        RequestData data = new RequestData(model.andrewId, view.getContentResolver(), model.fileUri, model.fileName);
         model.printing = true;
+        Log.d("Print API", "Starting request");
         new PrintApiRequest(data) {
             @Override
             protected void onPostExecute(RequestResult requestResult) {
@@ -122,8 +110,19 @@ public class MainActivityController {
                     model.printError = "";
                 }
                 else {
-                    model.printStatus = MainActivityModel.STATUS_ERROR;
-                    model.printError = requestResult.error;
+                    if (requestResult.permissionError) {
+                        if (permissions.requestFilePermission(view)) {
+                            Log.d("Print API", "Requesting permission");
+                            model.awaitingPermissions = true;
+                        }
+                        else {
+                            setOpenFileError();
+                        }
+                    }
+                    else {
+                        model.printStatus = MainActivityModel.STATUS_ERROR;
+                        model.printError = requestResult.error;
+                    }
                 }
                 model.printing = false;
                 view.render();
