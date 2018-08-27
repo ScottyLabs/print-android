@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ScottyLabs Print API</string>
+    <string name="app_name">ScottyLabs Print From Phone</string>
     <string name="print_bn_text">Print</string>
     <string name="print_bn_text_printing">Printing</string>
     <string name="andrew_id">Andrew ID</string>
@@ -12,6 +12,7 @@
     <string name="title_activity_feedback">Info</string>
     <string name="large_text">
         Developed and maintained by Tom Wildenhain\n\nSend
-        comments/bug reports to tw.appfeedback@gmail.com
+        comments/bug reports to tw.appfeedback@gmail.com\n\nPowered
+        by the ScottyLabs Print API
     </string>
 </resources>
