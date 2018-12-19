@@ -19,6 +19,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         renderMessage();
         renderTextEdit();
         renderPrintButton();
+        renderPrintSettings();
     }
 
     // Updates the message on the screen based on current state
@@ -116,6 +120,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void renderPrintSettings() {
+        RelativeLayout copiesLayout=(RelativeLayout)findViewById(R.id.copies_relative_layout);
+        RadioGroup duplexGroup=(RadioGroup)findViewById(R.id.duplex_radio_group);
+        if(model.hasFile) {
+            duplexGroup.setVisibility(View.VISIBLE);
+            copiesLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            duplexGroup.setVisibility(View.GONE);
+            copiesLayout.setVisibility(View.GONE);
+        }
+    }
+
     // Updates the appearance of the print button based on current state
     void renderPrintButton(){
         Button printButton=(Button)findViewById(R.id.printButton);
@@ -158,6 +175,30 @@ public class MainActivity extends AppCompatActivity {
     public String readAndrewIdEditText() {
         EditText editAndrewIdView=(EditText)findViewById(R.id.editAndrewId);
         return editAndrewIdView.getText().toString().trim();
+    }
+
+    public int readNumberOfCopies() {
+        EditText editAndrewIdView=(EditText)findViewById(R.id.num_copies_edit_text);
+        String text = editAndrewIdView.getText().toString().trim();
+        try {
+            int res = Integer.parseInt(text);
+            if (res < 1) {
+                return 1;
+            }
+            return res;
+        } catch (NumberFormatException e) {
+            return 1;
+        }
+    }
+
+    public DuplexSetting readDuplexSetting() {
+        RadioButton radioOneSided=(RadioButton)findViewById(R.id.radio_one_sided);
+        RadioButton radioTwoSidedLong=(RadioButton)findViewById(R.id.radio_two_sided_long_edge);
+        RadioButton radioTwoSidedShort=(RadioButton)findViewById(R.id.radio_two_sided_short_edge);
+        if (radioOneSided.isChecked()) return DuplexSetting.ONE_SIDED;
+        if (radioTwoSidedLong.isChecked()) return DuplexSetting.TWO_SIDED_LONG_EDGE;
+        if (radioTwoSidedShort.isChecked()) return DuplexSetting.TWO_SIDED_SHORT_EDGE;
+        return DuplexSetting.TWO_SIDED_LONG_EDGE;
     }
 
     @Override

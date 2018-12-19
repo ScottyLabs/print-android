@@ -15,12 +15,31 @@ public class RequestData {
     public ContentResolver contentResolver;
     public String fileName;
     public Uri fileUri;
+    public int copies;
+    public DuplexSetting sides;
 
-    public RequestData(String andrewId, ContentResolver contentResolver, Uri fileUri, String fileName){
+    public RequestData(String andrewId, ContentResolver contentResolver, Uri fileUri,
+                       String fileName, int copies, DuplexSetting sides){
         this.andrewId = andrewId;
         this.contentResolver = contentResolver;
         this.fileUri = fileUri;
         this.fileName = fileName;
+        this.copies = copies;
+        this.sides = sides;
+    }
 
+    public String getDuplexSettingString() {
+        switch (sides) {
+            case ONE_SIDED: {
+                return "one-sided";
+            }
+            case TWO_SIDED_LONG_EDGE: {
+                return "two-sided-long-edge";
+            }
+            case TWO_SIDED_SHORT_EDGE: {
+                return "two-sided-short-edge";
+            }
+        }
+        return "";
     }
 }

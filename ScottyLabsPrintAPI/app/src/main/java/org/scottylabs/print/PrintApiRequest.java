@@ -51,6 +51,8 @@ public class PrintApiRequest extends AsyncTask<Void, Void, RequestResult> {
             Log.d("ApiRequest", "Starting upload");
             MultipartUtility request = new MultipartUtility(API_URL,"UTF-8");
             request.addFormField("andrew_id",requestData.andrewId);
+            request.addFormField("copies", requestData.copies + "");
+            request.addFormField("sides", requestData.getDuplexSettingString());
             Log.d("ApiRequest", "Adding file");
             request.addFilePart("file",inputStream,requestData.fileName, ".pdf");
             Log.d("ApiRequest", "Uploading file");

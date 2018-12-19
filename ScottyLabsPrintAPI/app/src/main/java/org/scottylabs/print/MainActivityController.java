@@ -98,7 +98,11 @@ public class MainActivityController {
     public void sendPrintRequest() {
         Log.d("Print API", "Starting print request");
 
-        RequestData data = new RequestData(model.andrewId, view.getContentResolver(), model.fileUri, model.fileName);
+        int copies = view.readNumberOfCopies();
+        DuplexSetting duplexSetting = view.readDuplexSetting();
+
+        RequestData data = new RequestData(model.andrewId, view.getContentResolver(), model.fileUri,
+                model.fileName, copies, duplexSetting);
         model.printing = true;
         Log.d("Print API", "Starting request");
         new PrintApiRequest(data) {

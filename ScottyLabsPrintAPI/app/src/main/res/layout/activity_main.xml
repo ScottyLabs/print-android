@@ -79,7 +79,67 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:visibility="invisible"/>
+
         </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relative_layout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/copies_relative_layout"
+            android:layout_marginTop="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_of_copies_label"
+                android:id="@+id/num_copies_label"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"/>
+
+            <EditText
+                android:text="1"
+                android:hint="1"
+                android:layout_width="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/num_copies_label"
+                android:layout_toEndOf="@+id/num_copies_label"
+                android:id="@+id/num_copies_edit_text"
+                android:layout_centerVertical="true"
+                android:inputType="number"/>
+
+        </RelativeLayout>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/copies_relative_layout"
+            android:id="@+id/duplex_radio_group"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <RadioButton android:id="@+id/radio_one_sided"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/one_sided_option"/>
+            <RadioButton android:id="@+id/radio_two_sided_long_edge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/two_sided_long_edge"
+                android:checked="true"/>
+            <RadioButton android:id="@+id/radio_two_sided_short_edge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/two_sided_short_edge"/>
+
+        </RadioGroup>
+
         <Button
             android:text="@string/print_bn_text"
             android:layout_width="wrap_content"
@@ -89,9 +149,10 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/relative_layout"
+            android:layout_below="@+id/duplex_radio_group"
             android:onClick="printBnPress"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_marginTop="20dp"/>
+
     </RelativeLayout>
 </ScrollView>

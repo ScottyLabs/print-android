@@ -23,16 +23,22 @@ public class MainActivityModel {
     public boolean awaitingPermissions;
     public int printStatus = STATUS_NORMAL;
     public String printError = "";
+    //public int copies = 1;
+    //public DuplexSetting sides = DuplexSetting.TWO_SIDED_LONG_EDGE;
     public void saveToBundle(Bundle savedInstanceState) {
         savedInstanceState.putBoolean("EditingId", editingId);
         savedInstanceState.putInt("PrintStatus", printStatus);
         savedInstanceState.putString("PrintError", printError);
         savedInstanceState.putBoolean("AwaitingPermissions", awaitingPermissions);
+        //savedInstanceState.putInt("Copies", copies);
+        //savedInstanceState.putSerializable("Sides", sides);
     }
     public void restoreFromBundle(Bundle savedInstanceState) {
         editingId = savedInstanceState.getBoolean("EditingId");
         printStatus = savedInstanceState.getInt("PrintStatus");
         printError = savedInstanceState.getString("PrintError");
         awaitingPermissions = savedInstanceState.getBoolean("AwaitingPermissions");
+        //copies = savedInstanceState.getInt("Copies");
+        //sides = (DuplexSetting)savedInstanceState.getSerializable("Sides");
     }
 }

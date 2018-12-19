@@ -10,6 +10,10 @@
     <string name="msg_confirm_print">Tap print to add %1$s to the queue.</string>
     <string name="set_id">Set Andrew ID</string>
     <string name="title_activity_feedback">Info</string>
+    <string name="number_of_copies_label">Number of copies:</string>
+    <string name="one_sided_option">One sided</string>
+    <string name="two_sided_long_edge">Two sided (flip on long edge)</string>
+    <string name="two_sided_short_edge">Two sided (flip on short edge)</string>
     <string name="large_text">
         Developed and maintained by Tom Wildenhain\n\nSend
         comments/bug reports to tw.appfeedback@gmail.com\n\nPowered
